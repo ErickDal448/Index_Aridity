@@ -62,6 +62,8 @@ export default function Home() {
         <div className="h-[100vh] w-[100vw] fixed top-0 left-0 delay-1000">
           <Clouds />
         </div>
+        
+      <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     </div>
   );
 }

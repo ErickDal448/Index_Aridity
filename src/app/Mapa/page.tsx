@@ -41,19 +41,20 @@ function useWmsParams(layer: string) {
 }
 
 //Obtener datos de la capa IA
-var featuresData:  AxiosResponse<any, any>;
+const [featuresData, setfeaturesData] = useState({});
 async function getFeatures(IaYear: string) {
   console.log("Features from year: " + IaYear)
   const url = `http://localhost:8080/geoserver/IA/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=IA:ia_${IaYear}&maxFeatures=50&outputFormat=application%2Fjson`;
   try {
     const response = await axios.get(url);
-    featuresData = response.data.features;
+    setfeaturesData(response.data.features);
     console.log(featuresData)
   } catch (error) {
     console.error('Error al obtener los datos:', error);
   }
 }
-var YearSelected = "";
+
+const [YearSelected, setYearSelected] = useState("");
 export default function Home() {
   // constantes de deteccion de menu parametros
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -155,7 +156,7 @@ export default function Home() {
                         if (selectedOption) {
                           setSelectedLayerIa("ia_"+selectedOption.enlace);
                           getFeatures(selectedOption.enlace)
-                          YearSelected = selectedOption.enlace;
+                          setYearSelected(selectedOption.enlace);
                         }
                       }
                       if(item.Op === "muestra"){
@@ -235,7 +236,6 @@ export default function Home() {
       {/* Menu de descarga */}
       <Menu isOpen={isDownMenuOpen} onClose={() => setIsDownMenuOpen(false)} features={featuresData} mapRef={mapRef} IaFlag={IaFlag} IaYear={YearSelected}/>
         
-      <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     </div>
   );
 }
