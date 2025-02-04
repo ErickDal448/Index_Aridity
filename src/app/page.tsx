@@ -44,7 +44,7 @@ export default function Home() {
         animate = "show"
         transition={{ duration: 3, ease: "easeOut", delay: 3 }}
         >
-                {navItems.map((item, index) => (
+                {navItems.map((item) => (
                   <li
                   key={item.id}
                   className="flex items-center text-2xl gap-x-2 bg-bghover rounded-full p-3 text-foreground hover:text-primary hover:bg-backprimary">

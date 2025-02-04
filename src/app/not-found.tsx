@@ -2,7 +2,6 @@
 
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { navItems } from "./elements";
 import Clouds from "./clouds";
 import { motion } from "framer-motion";
 

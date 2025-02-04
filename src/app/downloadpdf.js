@@ -2,10 +2,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import jsPDF from 'jspdf'
 import { Chart } from 'chart.js/auto'; 
-import autoTable from 'jspdf-autotable';
 import html2canvas from 'html2canvas';
 import { LegendOp } from './elements';
-import { body, style } from 'framer-motion/client';
 
 
 var tableRef = useRef<HTMLDivElement>(null);
@@ -33,9 +31,9 @@ function Menu({ isOpen, onClose, features, mapRef, IaFlag , IaYear}) {
     };
   }, [onClose]);
   // Funcion de cerrado de menu (en caso de boton de cierre)
-  const handleClose = () => {
+  /*const handleClose = () => {
     onClose();
-  };
+  };*/
 
   //Diseño de botones del menu de descarga
   function DynamicToggle() {
@@ -447,10 +445,10 @@ function Menu({ isOpen, onClose, features, mapRef, IaFlag , IaYear}) {
             ?  (((docHeight - 20)/2.4)) :
             (toggles[0].isActive && toggles[1].isActive) // Todo esta activado
             ?  (((docHeight - 20)/1.5)) : ""
-
+            /*
             const plotCanvas = await html2canvas(canvasRef.current, {
               useCORS: true, // Si es necesario para acceder a recursos de otros dominios
-            });
+            });*/
             const imgData = canvas.toDataURL('image/png', 1.0); 
             if(!toggles[0].isActive && !toggles[1].isActive)
             {
@@ -504,7 +502,6 @@ function Menu({ isOpen, onClose, features, mapRef, IaFlag , IaYear}) {
         (<div  className='fixed top-0 z-[-999999] w-[100vw] h-[100vh] left-[200vh]'>
           <canvas ref={canvasRef} />
         </div>)}
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
       </div>
     );
   };

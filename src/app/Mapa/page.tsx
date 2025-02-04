@@ -1,12 +1,11 @@
 "use client";
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Suspense } from 'react'; 
+import React, {useEffect, useRef, useState } from 'react';
 import { OpItems, LegendOp } from "../elements";
 
 import Map from "../Components/Map"
 import Menu from '../downloadpdf';
 import { MovingMarker } from '../Markers';
-import { Marker, Popup, TileLayer,useMapEvent,useMapEvents,WMSTileLayer, WMSTileLayerProps } from 'react-leaflet'; 
+import { TileLayer, WMSTileLayer, WMSTileLayerProps } from 'react-leaflet'; 
 import L from 'leaflet';
 
 import { motion } from "framer-motion";
@@ -235,6 +234,8 @@ export default function Home() {
       </div>
       {/* Menu de descarga */}
       <Menu isOpen={isDownMenuOpen} onClose={() => setIsDownMenuOpen(false)} features={featuresData} mapRef={mapRef} IaFlag={IaFlag} IaYear={YearSelected}/>
+        
+      <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     </div>
   );
 }

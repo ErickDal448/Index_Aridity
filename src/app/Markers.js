@@ -1,7 +1,7 @@
-import axios from "axios";
+
 import L from "leaflet";
-import { useEffect, useRef, useState } from "react";
-import { Marker, Popup, useMapEvent, GeoJSON  } from "react-leaflet";
+import {  useRef, useState } from "react";
+import { Marker, Popup, useMapEvent  } from "react-leaflet";
 import proj4 from 'proj4';
 import 'proj4leaflet';
 const DEFAULT_CENTER = L.latLng(24.59119, -107.39151); 
