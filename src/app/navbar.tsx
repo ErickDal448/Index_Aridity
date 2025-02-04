@@ -1,6 +1,5 @@
 "use client";
 import Link from "next/link";
-import Image from "next/image";
 import "./style.css"
 import { useState } from "react";
 import { usePathname } from "next/navigation";
@@ -83,7 +82,7 @@ export default function Navbar() {
               </button>
             </div>
             <ul className="flex flex-col h-full gap-4 p-4">
-              {navItems.map((item, index) => (
+              {navItems.map((item) => (
                 <li
                 key={item.id}
                 className="flex items-center p-1 text-lg gap-x-2 text-foreground  hover:text-primary">
@@ -102,7 +101,7 @@ export default function Navbar() {
           {/* Desktop Menu */}
           <div className="hidden md:block">
             <ul className="flex flex-col gap-2 mt-2 mb-4 md:mb-0 md:mt-0 md:flex-row md:items-center md:gap-6">
-              {navItems.map((item, index) => (
+              {navItems.map((item) => (
                 <li
                   key={item.id}
                   className={`${path === item.href ? 'active' : ''} flex items-center p-1 text-lg gap-x-2 text-foreground hover:text-primary`}

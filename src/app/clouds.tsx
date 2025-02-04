@@ -1,6 +1,6 @@
 "use client"
-import React, { useEffect, useState, useRef } from 'react';
-import { easeIn, easeInOut, motion } from 'framer-motion';
+import React, { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
 
 interface CloudProps {
   x: number;
@@ -60,6 +60,7 @@ const Clouds = () =>{
         const margin = 500; // Margen entre nubes
       
         for (let i = 0; i < 3; i++) {
+          seed = seed;
           const random = Math.random();
           cloudData.push({
             x: random * (window.innerWidth - cloudWidth - margin * 4) + margin, 
