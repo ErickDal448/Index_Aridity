@@ -3,14 +3,22 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #F0EBC7;
+  --backgroundhover: #f0ebc720;
+  --foreground: #36302B;
+  --primary: #5998C5;
+  --primaryback: #5998c520;
+  --backinfo: #D0D4CA;
+  --backimage: #828282;
+  --backmap: #828282;
+  --backbtn: #444444;
+  --confirm: #A7D397;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #36302B;
+    --foreground: #F0EBC7;
   }
 }
 
@@ -19,3 +27,18 @@ body {
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.abhaya {
+  font-family: 'Abhaya Libre', serif;
+}
+
+.icon-map-menu-circle:hover{
+  background-color: var(--backgroundhover);
+}
+.icon-map-menu-circle:hover svg path{
+  fill: var(--foreground);
+}
+.icon-map-menu{
+  fill: var(--primary);
+}
+
