@@ -9,7 +9,7 @@ import { TileLayer, WMSTileLayer, WMSTileLayerProps } from 'react-leaflet';
 import L from 'leaflet';
 
 import { motion } from "framer-motion";
-import axios, { AxiosResponse } from 'axios';
+import axios from 'axios';
 const DEFAULT_CENTER: L.LatLng = L.latLng(24.59119, -107.39151); 
 
 //Motion variantes 
@@ -40,8 +40,17 @@ function useWmsParams(layer: string) {
   return wmsParams;
 }
 
+
+export default function Home() {
+  const [featuresData, setfeaturesData] = useState({});
+  const [YearSelected, setYearSelected] = useState("");
+  // constantes de deteccion de menu parametros
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const toggleOptionMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
 //Obtener datos de la capa IA
-const [featuresData, setfeaturesData] = useState({});
 async function getFeatures(IaYear: string) {
   console.log("Features from year: " + IaYear)
   const url = `http://localhost:8080/geoserver/IA/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=IA:ia_${IaYear}&maxFeatures=50&outputFormat=application%2Fjson`;
@@ -53,15 +62,6 @@ async function getFeatures(IaYear: string) {
     console.error('Error al obtener los datos:', error);
   }
 }
-
-const [YearSelected, setYearSelected] = useState("");
-export default function Home() {
-  // constantes de deteccion de menu parametros
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const toggleOptionMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
-
   //constantes para detectar el layer de terreno y aplicarlo en wmsParams
   const [selectedLayer, setSelectedLayer] = useState<string>('');
   const wmsParams = useWmsParams(selectedLayer); 
@@ -80,7 +80,8 @@ export default function Home() {
   };
   //Funcion de deteccion de layer de IA (Si no tiene la capa IA borra el leayer de IA o lo vuelve a generar en caso de que vuelva a cargar)
   const toggleIaTo = (SFlag : string) => {
-    SFlag == "ia" ? setIaFlag(true): setIaFlag(false);
+    setIaFlag(SFlag == "ia" ? true: false)
+    
     if(SFlag != "ia"){
       setSelectedLayerIa("ia_")
     }
