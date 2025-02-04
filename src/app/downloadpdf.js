@@ -32,9 +32,9 @@ function Menu({ isOpen, onClose, features, mapRef, IaFlag , IaYear}) {
     };
   }, [onClose]);
   // Funcion de cerrado de menu (en caso de boton de cierre)
-  const handleClose = () => {
+ /* const handleClose = () => {
     onClose();
-  };
+  };*/
 
   //Diseño de botones del menu de descarga
   function DynamicToggle() {
@@ -186,7 +186,7 @@ function Menu({ isOpen, onClose, features, mapRef, IaFlag , IaYear}) {
             if(!toggles[0].isActive && !toggles[2].isActive){ 
               doc = new jsPDF('l', 'mm', [297, 210]); // Tamaño A4 horizontal en milímetros
               doc.text("Atidity Index - año: "+ IaYear + " - Document in PDF", 10 , 7)
-              doc.autoTable({
+              autoTable( doc,{
                 startY: 20,
                 body: data,
                 style:{
@@ -220,7 +220,7 @@ function Menu({ isOpen, onClose, features, mapRef, IaFlag , IaYear}) {
             }
             else
             {
-              doc.autoTable({
+              autoTable(doc,{
                 startY: inicioY,
                 body: data,
                 style: {
@@ -467,6 +467,7 @@ function Menu({ isOpen, onClose, features, mapRef, IaFlag , IaYear}) {
             const plotCanvas = await html2canvas(canvasRef.current, {
               useCORS: true, // Si es necesario para acceder a recursos de otros dominios
             });
+            plotCanvas = plotCanvas;
             const imgData = canvas.toDataURL('image/png', 1.0); 
             if(!toggles[0].isActive && !toggles[1].isActive)
             {
