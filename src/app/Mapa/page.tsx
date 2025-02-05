@@ -2,7 +2,6 @@
 import React, {useEffect, useRef, useState } from 'react';
 import { OpItems, LegendOp } from "../elements";
 import { WMSTileLayerProps } from 'react-leaflet'; 
-import L from 'leaflet';
 import { motion } from "framer-motion";
 import axios from 'axios';
 import dynamic from 'next/dynamic';
@@ -10,9 +9,6 @@ import dynamic from 'next/dynamic';
 const Map = dynamic(() => import('../Components/Map'), { ssr: false }); 
 const MovingMarker = dynamic(() => import('../Markers'), { ssr: false }); 
 const Menu = dynamic(() => import('../downloadpdf'), { ssr: false }); 
-
-
-const DEFAULT_CENTER: L.LatLng = L.latLng(24.59119, -107.39151); 
 
 //Motion variantes 
 const legendVariant = {
@@ -197,55 +193,57 @@ export default function Home() {
           </div>
         </div>
       </div>
-      
-      {/* Mapa */}
-      <div className=" px-4 pt-4 md:p-0 md:py-6 md:pl-6 h-full w-full">
-        <div className="flex bg-backmap p-1 md:p-2 h-full w-full rounded-t-[30px] md:rounded-none md:rounded-l-[30px] animate-d_to_t md:animate-r_to_l">
-          {isClient && (
-            <div ref={mapRef} className="row-start-1 h-full w-full">
-              <div className={`z-[999] absolute left-[5rem] min-h-[20px] min-w-[8.5rem] bg-backmap rounded-b-xl cursor-pointer ${!IaFlag ? "hidden" : "block"}`} onClick={toggleLegend}>
-                {/* Leyenda */}
-                <motion.div
-                        className='text-xs p-2 bg-backmap rounded-b-xl pointer'
-                        variants={legendVariant}
-                        initial="hidden"
-                        animate={LegendFlag ? "show" : "hidden"}
-                        transition={{ duration: 2, ease: "easeOut" }}
-                        onClick={toggleLegend}
-                      >
-                        {LegendOp.map((item, Index) => (
-                          <motion.div
-                            className='flex flex-row p-1 gap-2'
-                            key={Index}
-                            variants={ShowVariant}
-                            initial="hidden"
-                            animate={LegendFlag ? "show" : "hidden"}
-                            transition={{ duration: 1, ease: "easeOut", delay: 1 + Index * 0.4 }}
-                            onClick={toggleLegend}
-                          >
-                            <div
-                              style={{ background: item.color }}
-                              className='h-[15px] w-[15px] border-solid rounded-full'
-                            />
-                            <p>{item.name}</p>
-                          </motion.div>
-                        ))}
-                      </motion.div>
-              </div>
-              <div className='w-full h-full' >
-                {/* Generación de mapa */}
-                <Map mapRefGeo={mapRefGeo} wmsParams={wmsParams} wmsParamsIa={wmsParamsIa} className=" rounded-t-[30px] md:rounded-none md:rounded-l-[30px] w-full h-full mapDOM" center={DEFAULT_CENTER} zoom={6}>
-                    <MovingMarker features={featuresData} Year={IaFlag ? YearSelected : 0}/>
-                </Map>
+      <>
+        {isClient && (
+          <>
+            {/* Mapa */}
+            <div className=" px-4 pt-4 md:p-0 md:py-6 md:pl-6 h-full w-full">
+              <div className="flex bg-backmap p-1 md:p-2 h-full w-full rounded-t-[30px] md:rounded-none md:rounded-l-[30px] animate-d_to_t md:animate-r_to_l">
+                  <div ref={mapRef} className="row-start-1 h-full w-full">
+                    <div className={`z-[999] absolute left-[5rem] min-h-[20px] min-w-[8.5rem] bg-backmap rounded-b-xl cursor-pointer ${!IaFlag ? "hidden" : "block"}`} onClick={toggleLegend}>
+                      {/* Leyenda */}
+                      <motion.div
+                              className='text-xs p-2 bg-backmap rounded-b-xl pointer'
+                              variants={legendVariant}
+                              initial="hidden"
+                              animate={LegendFlag ? "show" : "hidden"}
+                              transition={{ duration: 2, ease: "easeOut" }}
+                              onClick={toggleLegend}
+                            >
+                              {LegendOp.map((item, Index) => (
+                                <motion.div
+                                  className='flex flex-row p-1 gap-2'
+                                  key={Index}
+                                  variants={ShowVariant}
+                                  initial="hidden"
+                                  animate={LegendFlag ? "show" : "hidden"}
+                                  transition={{ duration: 1, ease: "easeOut", delay: 1 + Index * 0.4 }}
+                                  onClick={toggleLegend}
+                                >
+                                  <div
+                                    style={{ background: item.color }}
+                                    className='h-[15px] w-[15px] border-solid rounded-full'
+                                  />
+                                  <p>{item.name}</p>
+                                </motion.div>
+                              ))}
+                            </motion.div>
+                    </div>
+                    <div className='w-full h-full' >
+                      {/* Generación de mapa */}
+                      <Map mapRefGeo={mapRefGeo} wmsParams={wmsParams} wmsParamsIa={wmsParamsIa} className=" rounded-t-[30px] md:rounded-none md:rounded-l-[30px] w-full h-full mapDOM" zoom={6} center={[24.59119, -107.39151]}>
+                        
+                          <MovingMarker features={featuresData} Year={IaFlag ? YearSelected : 0}/>
+                      </Map>
+                    </div>
+                  </div>
               </div>
             </div>
-          )}
-        </div>
-      </div>
-      {/* Menu de descarga */}
-      {isClient && (
-       <Menu isOpen={isDownMenuOpen} onClose={() => setIsDownMenuOpen(false)} features={featuresData} mapRef={mapRef} IaFlag={IaFlag} IaYear={YearSelected}/>
-      )}
+            {/* Menu de descarga */}
+            <Menu isOpen={isDownMenuOpen} onClose={() => setIsDownMenuOpen(false)} features={featuresData} mapRef={mapRef} IaFlag={IaFlag} IaYear={YearSelected}/>
+          </>
+        )}
+      </>
         
     </div>
   );

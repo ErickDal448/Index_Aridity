@@ -1,6 +1,6 @@
 
 import * as ReactLeaflet from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
+import {useEffect, useState } from 'react';
 
 import styles from './Map.module.scss';
 
@@ -10,22 +10,36 @@ const { WMSTileLayer } = ReactLeaflet;
 
 const Map = ({mapRefGeo, wmsParams, wmsParamsIa, children, className, ...rest }) => {
   let mapClassName = styles.map;
+  const [isClient, setIsClient] = useState(false); 
 
   if ( className ) {
     mapClassName = `${mapClassName} ${className}`;
   }
-  
+
+  useEffect(() => {
+    setIsClient(typeof window !== 'undefined');
+    if (typeof window !== 'undefined') { 
+      import('leaflet/dist/leaflet.css');
+      
+    }
+  }, []);
+
   return (
-    <MapContainer ref={mapRefGeo} className={mapClassName} {...rest}>
-      <TileLayer
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        attribution="&copy; <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors"
-      />
-      <WMSTileLayer key={wmsParams.layers} {...wmsParams} />
-                            
-      <WMSTileLayer key={"ia_" + wmsParamsIa.layers} {...wmsParamsIa} />
-      {children}
-    </MapContainer>
+    <>
+      {isClient ? (
+        <MapContainer ref={mapRefGeo} className={mapClassName} {...rest}>
+          <TileLayer
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            attribution="&copy; <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors"
+          />
+          <WMSTileLayer key={wmsParams.layers} {...wmsParams} />
+                                
+          <WMSTileLayer key={"ia_" + wmsParamsIa.layers} {...wmsParamsIa} />
+          {children}
+        </MapContainer>
+        ) :(<></>)
+      }
+    </>
   )
 }
 
