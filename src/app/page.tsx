@@ -23,6 +23,7 @@ const fitTitle ={
 
 
 export default function Home() {
+  
   return (
     <div className="bg-foreground items-center justify-items-center w-full h-full min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
       <main className="fixed top-[50%] left-[50%] translate-y-[-50%] translate-x-[-50%] flex flex-col items-center justify-center bg-background w-[80vw] h-[75vh] md:w-[40vw] md:h-[70vh] rounded-[60px] p-8 z-[9999] shadow-xl  animate-home"

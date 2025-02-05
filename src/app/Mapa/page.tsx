@@ -42,26 +42,37 @@ function useWmsParams(layer: string) {
 
 
 export default function Home() {
+  const [isClient, setIsClient] = useState(false);
   const [featuresData, setfeaturesData] = useState({});
   const [YearSelected, setYearSelected] = useState("");
+
+  //Deteccion de cliente o servidor
+  useEffect(() => {
+    setIsClient(typeof window !== 'undefined');
+  }, []);
   // constantes de deteccion de menu parametros
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const toggleOptionMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
-//Obtener datos de la capa IA
-async function getFeatures(IaYear: string) {
-  console.log("Features from year: " + IaYear)
-  const url = `http://localhost:8080/geoserver/IA/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=IA:ia_${IaYear}&maxFeatures=50&outputFormat=application%2Fjson`;
-  try {
-    const response = await axios.get(url);
-    setfeaturesData(response.data.features);
-    console.log(featuresData)
-  } catch (error) {
-    console.error('Error al obtener los datos:', error);
+  //Obtener datos de la capa IA
+  async function getFeatures(IaYear: string) {
+    console.log("Features from year: " + IaYear)
+    const url = `http://localhost:8080/geoserver/IA/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=IA:ia_${IaYear}&maxFeatures=50&outputFormat=application%2Fjson`;
+    try {
+      const response = await axios.get(url);
+      setfeaturesData(response.data.features);
+      console.log(featuresData)
+    } catch (error) {
+      console.error('Error al obtener los datos:', error);
+    }
   }
-}
+  
+  //Funcion de apertura de leyenda
+  const toggleLegend = () => {
+    setLegendFlag(!LegendFlag);
+  };
   //constantes para detectar el layer de terreno y aplicarlo en wmsParams
   const [selectedLayer, setSelectedLayer] = useState<string>('');
   const wmsParams = useWmsParams(selectedLayer); 
@@ -73,11 +84,6 @@ async function getFeatures(IaYear: string) {
   //Constantes booleanas para detectar si abrir o cerrar la leyenda del mapa
   const [LegendFlag, setLegendFlag] = useState(true);
   const [IaFlag, setIaFlag] = useState(false);
-  
-  //Funcion de apertura de leyenda
-  const toggleLegend = () => {
-    setLegendFlag(!LegendFlag);
-  };
   //Funcion de deteccion de layer de IA (Si no tiene la capa IA borra el leayer de IA o lo vuelve a generar en caso de que vuelva a cargar)
   const toggleIaTo = (SFlag : string) => {
     setIaFlag(SFlag == "ia" ? true: false)
@@ -186,56 +192,60 @@ async function getFeatures(IaYear: string) {
       {/* Mapa */}
       <div className=" px-4 pt-4 md:p-0 md:py-6 md:pl-6 h-full w-full">
         <div className="flex bg-backmap p-1 md:p-2 h-full w-full rounded-t-[30px] md:rounded-none md:rounded-l-[30px] animate-d_to_t md:animate-r_to_l">
-          <div ref={mapRef} className="row-start-1 h-full w-full">
-            <div className={`z-[999] absolute left-[5rem] min-h-[20px] min-w-[8.5rem] bg-backmap rounded-b-xl cursor-pointer ${!IaFlag ? "hidden" : "block"}`} onClick={toggleLegend}>
-              {/* Leyenda */}
-              <motion.div
-                      className='text-xs p-2 bg-backmap rounded-b-xl pointer'
-                      variants={legendVariant}
-                      initial="hidden"
-                      animate={LegendFlag ? "show" : "hidden"}
-                      transition={{ duration: 2, ease: "easeOut" }}
-                      onClick={toggleLegend}
-                    >
-                      {LegendOp.map((item, Index) => (
-                        <motion.div
-                          className='flex flex-row p-1 gap-2'
-                          key={Index}
-                          variants={ShowVariant}
-                          initial="hidden"
-                          animate={LegendFlag ? "show" : "hidden"}
-                          transition={{ duration: 1, ease: "easeOut", delay: 1 + Index * 0.4 }}
-                          onClick={toggleLegend}
-                        >
-                          <div
-                            style={{ background: item.color }}
-                            className='h-[15px] w-[15px] border-solid rounded-full'
-                          />
-                          <p>{item.name}</p>
-                        </motion.div>
-                      ))}
-                    </motion.div>
+          {isClient && (
+            <div ref={mapRef} className="row-start-1 h-full w-full">
+              <div className={`z-[999] absolute left-[5rem] min-h-[20px] min-w-[8.5rem] bg-backmap rounded-b-xl cursor-pointer ${!IaFlag ? "hidden" : "block"}`} onClick={toggleLegend}>
+                {/* Leyenda */}
+                <motion.div
+                        className='text-xs p-2 bg-backmap rounded-b-xl pointer'
+                        variants={legendVariant}
+                        initial="hidden"
+                        animate={LegendFlag ? "show" : "hidden"}
+                        transition={{ duration: 2, ease: "easeOut" }}
+                        onClick={toggleLegend}
+                      >
+                        {LegendOp.map((item, Index) => (
+                          <motion.div
+                            className='flex flex-row p-1 gap-2'
+                            key={Index}
+                            variants={ShowVariant}
+                            initial="hidden"
+                            animate={LegendFlag ? "show" : "hidden"}
+                            transition={{ duration: 1, ease: "easeOut", delay: 1 + Index * 0.4 }}
+                            onClick={toggleLegend}
+                          >
+                            <div
+                              style={{ background: item.color }}
+                              className='h-[15px] w-[15px] border-solid rounded-full'
+                            />
+                            <p>{item.name}</p>
+                          </motion.div>
+                        ))}
+                      </motion.div>
+              </div>
+              <div className='w-full h-full' >
+                {/* Generación de mapa */}
+                <Map mapRefGeo={mapRefGeo} className=" rounded-t-[30px] md:rounded-none md:rounded-l-[30px] w-full h-full mapDOM" center={DEFAULT_CENTER} zoom={6}>
+                    <>
+                      <TileLayer
+                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                        attribution="&copy; <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors"
+                      />
+                      <WMSTileLayer key={wmsParams.layers} {...wmsParams} />
+                      
+                      <WMSTileLayer key={"ia_" + wmsParamsIa.layers} {...wmsParamsIa} />
+                    </>
+                    <MovingMarker features={featuresData} Year={IaFlag ? YearSelected : 0}/>
+                </Map>
+              </div>
             </div>
-            <div className='w-full h-full' >
-              {/* Generación de mapa */}
-              <Map mapRefGeo={mapRefGeo} className=" rounded-t-[30px] md:rounded-none md:rounded-l-[30px] w-full h-full mapDOM" center={DEFAULT_CENTER} zoom={6}>
-                  <>
-                    <TileLayer
-                      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                      attribution="&copy; <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors"
-                    />
-                    <WMSTileLayer key={wmsParams.layers} {...useWmsParams(selectedLayer)} />
-                    
-                    <WMSTileLayer key={"ia_" + wmsParamsIa.layers} {...useWmsParams(selectedLayerIa)} />
-                  </>
-                  <MovingMarker features={featuresData} Year={IaFlag ? YearSelected : 0}/>
-              </Map>
-            </div>
-          </div>
+          )}
         </div>
       </div>
       {/* Menu de descarga */}
-      <Menu isOpen={isDownMenuOpen} onClose={() => setIsDownMenuOpen(false)} features={featuresData} mapRef={mapRef} IaFlag={IaFlag} IaYear={YearSelected}/>
+      {isClient && (
+       <Menu isOpen={isDownMenuOpen} onClose={() => setIsDownMenuOpen(false)} features={featuresData} mapRef={mapRef} IaFlag={IaFlag} IaYear={YearSelected}/>
+      )}
         
     </div>
   );
