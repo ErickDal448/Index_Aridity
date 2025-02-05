@@ -1,15 +1,17 @@
 "use client";
 import React, {useEffect, useRef, useState } from 'react';
 import { OpItems, LegendOp } from "../elements";
-
-import Map from "../Components/Map"
-import Menu from '../downloadpdf';
-import { MovingMarker } from '../Markers';
-import { TileLayer, WMSTileLayer, WMSTileLayerProps } from 'react-leaflet'; 
+import { WMSTileLayerProps } from 'react-leaflet'; 
 import L from 'leaflet';
-
 import { motion } from "framer-motion";
 import axios from 'axios';
+import dynamic from 'next/dynamic';
+
+const Map = dynamic(() => import('../Components/Map'), { ssr: false }); 
+const MovingMarker = dynamic(() => import('../Markers'), { ssr: false }); 
+const Menu = dynamic(() => import('../downloadpdf'), { ssr: false }); 
+
+
 const DEFAULT_CENTER: L.LatLng = L.latLng(24.59119, -107.39151); 
 
 //Motion variantes 
@@ -232,16 +234,7 @@ export default function Home() {
               </div>
               <div className='w-full h-full' >
                 {/* Generación de mapa */}
-                <Map mapRefGeo={mapRefGeo} className=" rounded-t-[30px] md:rounded-none md:rounded-l-[30px] w-full h-full mapDOM" center={DEFAULT_CENTER} zoom={6}>
-                    <>
-                      <TileLayer
-                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                        attribution="&copy; <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors"
-                      />
-                      <WMSTileLayer key={wmsParams.layers} {...wmsParams} />
-                      
-                      <WMSTileLayer key={"ia_" + wmsParamsIa.layers} {...wmsParamsIa} />
-                    </>
+                <Map mapRefGeo={mapRefGeo} wmsParams={wmsParams} wmsParamsIa={wmsParamsIa} className=" rounded-t-[30px] md:rounded-none md:rounded-l-[30px] w-full h-full mapDOM" center={DEFAULT_CENTER} zoom={6}>
                     <MovingMarker features={featuresData} Year={IaFlag ? YearSelected : 0}/>
                 </Map>
               </div>

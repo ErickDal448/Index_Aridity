@@ -24,7 +24,7 @@ const MARKER = `data:image/svg+xml;utf8,${encodeURIComponent(`<?xml version="1.0
       popupAnchor: [0, 0],
   });
   
-export function MovingMarker({ features, Year}) {
+function MovingMarker({ features, Year}) {
   const [position, setPosition] = useState(DEFAULT_CENTER);
   const [PopCategoria, setPopCategoria] = useState("...");
   const [PopSuperficie, setPopSuperficie] = useState(0);
@@ -125,3 +125,4 @@ export function MovingMarker({ features, Year}) {
     </>
   );
 }
+export default MovingMarker
