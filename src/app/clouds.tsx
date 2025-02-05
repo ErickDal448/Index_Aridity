@@ -51,7 +51,12 @@ const Cloud2: React.FC<CloudProps> = ({ x, y, scale }) => {
 };
 
 const Clouds = () =>{
+    const [isClient, setIsClient] = useState(false);
     const [seed, setSeed] = useState(Date.now());
+
+    useEffect(() => {
+      setIsClient(typeof window !== 'undefined');
+    }, []);
   
     const generateCloudData = (seed: number) => {
         const cloudData: CloudProps[] = [];
@@ -82,13 +87,17 @@ const Clouds = () =>{
   
     return (
         <div className="cloud-container">
-            {generateCloudData(seed).map((cloud, index) => (
-                <motion.div
-                key={index}>
-                    <Cloud1 key={index + 5} {...cloud} />
-                    <Cloud2 key={index + 10} {...cloud} />
-                </motion.div>
-            ))}
+          {isClient && (
+            <>
+              {generateCloudData(seed).map((cloud, index) => (
+                  <motion.div
+                  key={index}>
+                      <Cloud1 key={index + 5} {...cloud} />
+                      <Cloud2 key={index + 10} {...cloud} />
+                  </motion.div>
+              ))}
+            </>
+          )}
       </div>
     );
   };
