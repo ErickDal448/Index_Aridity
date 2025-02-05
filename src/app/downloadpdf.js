@@ -463,11 +463,10 @@ function Menu({ isOpen, onClose, features, mapRef, IaFlag , IaYear}) {
             ?  (((docHeight - 20)/2.4)) :
             (toggles[0].isActive && toggles[1].isActive) // Todo esta activado
             ?  (((docHeight - 20)/1.5)) : ""
-
-            const plotCanvas = await html2canvas(canvasRef.current, {
+            
+            await html2canvas(canvasRef.current, {
               useCORS: true, // Si es necesario para acceder a recursos de otros dominios
-            });
-            plotCanvas = plotCanvas;
+            })
             const imgData = canvas.toDataURL('image/png', 1.0); 
             if(!toggles[0].isActive && !toggles[1].isActive)
             {
