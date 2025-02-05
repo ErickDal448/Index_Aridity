@@ -13,7 +13,7 @@ export default function Navbar() {
   const path = usePathname();
 
   return (
-    <div className={`${path === "/" || path == "/404" ? 'hidden' : ''}`}>
+    <div className={`${path === "/" ? 'hidden' : ''}`}>
       <nav className="block w-full max-w-screen px-4 py-4 mx-auto bg-background bg-opacity-90 sticky top-3 shadow-2xl lg:px-8 backdrop-blur-lg backdrop-saturate-150 z-[9999]">
         <div className="container flex flex-wrap items-center justify-end lg:justify-center mx-auto text-slate-800">
           <div className="bg-background rounded-xl p-5 py-1.5 absolute left-0 mx-4 flex justify-center items-center animate-inicio z-[99999]">

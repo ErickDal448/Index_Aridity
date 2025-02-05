@@ -1,10 +1,7 @@
 "use client"
-
-import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import Clouds from "./clouds";
 import { motion } from "framer-motion";
-import { useEffect } from "react";
 
 
 
@@ -26,20 +23,7 @@ const fitTitle ={
 
 
 export default function NotFound() {
-
-  const pathname = usePathname();
-  const router = useRouter();
-
-  useEffect(() => {
-    const verificarRuta = () => {
-      if (pathname !== '/' && pathname !== '/404') {
-        router.push('/404');
-      }
-    };
-
-    verificarRuta(); // Verifica al montar
-
-  }, [router, pathname]);
+ 
   return (
     <div className="bg-foreground items-center justify-items-center w-full h-full min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
       <main className="fixed top-[50%] left-[50%] translate-y-[-50%] translate-x-[-50%] flex flex-col items-center justify-center bg-background w-[80vw] h-[75vh] md:w-[40vw] md:h-[70vh] rounded-[60px] z-[9999] shadow-xl  animate-home"
