@@ -42,32 +42,44 @@ function useWmsParams(layer: string) {
 
 
 export default function Home() {
+  
+  const mapRef = useRef<HTMLDivElement>(null);
+  const mapRefGeo = useRef<HTMLDivElement>(null);
   const [isClient, setIsClient] = useState(false);
-  const [featuresData, setfeaturesData] = useState({});
+  const [featuresData, setfeaturesData] = useState([]);
   const [YearSelected, setYearSelected] = useState("");
-
+  //Constantes booleanas para detectar si abrir o cerrar la leyenda del mapa
+  const [LegendFlag, setLegendFlag] = useState(true);
+  const [IaFlag, setIaFlag] = useState(false);
   //Deteccion de cliente o servidor
   useEffect(() => {
     setIsClient(typeof window !== 'undefined');
-  }, []);
+    if(typeof window !== 'undefined')
+    {
+      //Obtener datos de la capa IA
+      async function getFeatures(IaYear: string) {
+        console.log("Features from year: " + IaYear)
+        const url = `http://localhost:8080/geoserver/IA/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=IA:ia_${IaYear}&maxFeatures=50&outputFormat=application%2Fjson`;
+        try {
+          const response = await axios.get(url);
+          setfeaturesData(response.data.features);
+          console.log(featuresData)
+        } catch (error) {
+          console.error('Error al obtener los datos:', error);
+        }
+      }
+      // Llamar a getFeatures si es necesario (ejemplo)
+      if (IaFlag && YearSelected) {
+        getFeatures(YearSelected);
+      }
+    }
+  }, [IaFlag, YearSelected]);
   // constantes de deteccion de menu parametros
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const toggleOptionMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
-  //Obtener datos de la capa IA
-  async function getFeatures(IaYear: string) {
-    console.log("Features from year: " + IaYear)
-    const url = `http://localhost:8080/geoserver/IA/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=IA:ia_${IaYear}&maxFeatures=50&outputFormat=application%2Fjson`;
-    try {
-      const response = await axios.get(url);
-      setfeaturesData(response.data.features);
-      console.log(featuresData)
-    } catch (error) {
-      console.error('Error al obtener los datos:', error);
-    }
-  }
   
   //Funcion de apertura de leyenda
   const toggleLegend = () => {
@@ -81,9 +93,7 @@ export default function Home() {
   const [selectedLayerIa, setSelectedLayerIa] = useState<string>('');
   const wmsParamsIa = useWmsParams(selectedLayerIa);
 
-  //Constantes booleanas para detectar si abrir o cerrar la leyenda del mapa
-  const [LegendFlag, setLegendFlag] = useState(true);
-  const [IaFlag, setIaFlag] = useState(false);
+  
   //Funcion de deteccion de layer de IA (Si no tiene la capa IA borra el leayer de IA o lo vuelve a generar en caso de que vuelva a cargar)
   const toggleIaTo = (SFlag : string) => {
     setIaFlag(SFlag == "ia" ? true: false)
@@ -105,8 +115,6 @@ export default function Home() {
   };
 
   //Return principal de la pagina
-  const mapRef = useRef<HTMLDivElement>(null);
-  const mapRefGeo = useRef<HTMLDivElement>(null);
   return (
     <div className="bg-foreground h-[calc(100vh_-_68px)] items-center justify-items-center font-[family-name:var(--font-geist-sans)]" id='root'>
       {/* Menu de parametros */}
@@ -162,7 +170,6 @@ export default function Home() {
                         );
                         if (selectedOption) {
                           setSelectedLayerIa("ia_"+selectedOption.enlace);
-                          getFeatures(selectedOption.enlace)
                           setYearSelected(selectedOption.enlace);
                         }
                       }
