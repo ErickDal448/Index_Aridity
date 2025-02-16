@@ -100,7 +100,7 @@ function Menu({ isOpen, onClose, features, mapRef, IaFlag , IaYear}) {
           var doc = new jsPDF();
           var docWidth = doc.internal.pageSize.getWidth();
           var docHeight = doc.internal.pageSize.getHeight();
-          doc.text("Atidity Index - año: "+ IaYear + " - Document in PDF", 50 , 10)
+          doc.text("Aridity Index - año: "+ IaYear + " - Document in PDF", 50 , 10)
           
           // Mapa activado ? 
           if (toggles[0].isActive) { 
@@ -124,7 +124,7 @@ function Menu({ isOpen, onClose, features, mapRef, IaFlag , IaYear}) {
             if(!toggles[1].isActive && !toggles[2].isActive) // Solo esta el mapa
             {
               doc = new jsPDF('l', 'mm', [297, 210]); // Tamaño A4 horizontal en milímetros
-              doc.text("Atidity Index - Document in PDF", 10 , 7)
+              doc.text("Aridity Index - Document in PDF", 10 , 7)
               docWidth = doc.internal.pageSize.getWidth();
               docHeight = doc.internal.pageSize.getHeight();
 
@@ -192,7 +192,7 @@ function Menu({ isOpen, onClose, features, mapRef, IaFlag , IaYear}) {
             // Solo esta activada la tabla
             if(!toggles[0].isActive && !toggles[2].isActive){ 
               doc = new jsPDF('l', 'mm', [297, 210]); // Tamaño A4 horizontal en milímetros
-              doc.text("Atidity Index - año: "+ IaYear + " - Document in PDF", 10 , 7)
+              doc.text("Aridity Index - año: "+ IaYear + " - Document in PDF", 10 , 7)
               autoTable( doc,{
                 startY: 20,
                 body: data,
@@ -478,7 +478,7 @@ function Menu({ isOpen, onClose, features, mapRef, IaFlag , IaYear}) {
             if(!toggles[0].isActive && !toggles[1].isActive)
             {
               doc = new jsPDF('l', 'mm', [297, 210]); // Tamaño A4 horizontal en milímetros
-              doc.text("Atidity Index - año: "+ IaYear + " - Document in PDF", 10 , 7)
+              doc.text("Aridity Index - año: "+ IaYear + " - Document in PDF", 10 , 7)
               docWidth = doc.internal.pageSize.getWidth();
               docHeight = doc.internal.pageSize.getHeight();
 
