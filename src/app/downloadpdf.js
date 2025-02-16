@@ -22,6 +22,13 @@ function Menu({ isOpen, onClose, features, mapRef, IaFlag , IaYear}) {
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
+        if(IaFlag == false){
+          setToggles((prevToggles) =>
+            prevToggles.map((toggle) =>
+              toggle.id != 1 ? { ...toggle, isActive: false } : toggle
+            )
+          );
+        }
         onClose();
       }
     };
@@ -94,7 +101,7 @@ function Menu({ isOpen, onClose, features, mapRef, IaFlag , IaYear}) {
           var docWidth = doc.internal.pageSize.getWidth();
           var docHeight = doc.internal.pageSize.getHeight();
           doc.text("Atidity Index - año: "+ IaYear + " - Document in PDF", 50 , 10)
-
+          
           // Mapa activado ? 
           if (toggles[0].isActive) { 
             //Ajustes de diseño para colocarlo en pdf tamaño carta (Quitar boton de zoom, atribution, poner bordes y quitar sombras)

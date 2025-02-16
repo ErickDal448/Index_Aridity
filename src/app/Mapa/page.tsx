@@ -1,5 +1,5 @@
 "use client";
-import React, {useEffect, useRef, useState } from 'react';
+import React, {useEffect, useRef, useState, useCallback } from 'react';
 import { OpItems, LegendOp } from "../elements";
 import { WMSTileLayerProps } from 'react-leaflet'; 
 import { motion } from "framer-motion";
@@ -45,33 +45,68 @@ export default function Home() {
   const mapRefGeo = useRef<HTMLDivElement>(null);
   const [isClient, setIsClient] = useState(false);
   const [featuresData, setfeaturesData] = useState([]);
-  const [YearSelected, setYearSelected] = useState("");
   //Constantes booleanas para detectar si abrir o cerrar la leyenda del mapa
   const [LegendFlag, setLegendFlag] = useState(true);
   const [IaFlag, setIaFlag] = useState(false);
+  const [FetchFlag, setFetchFlag] = useState(false);
+  const [YearSelected, setYearSelected] = useState("");
+  const [selectedYearForFetch, setSelectedYearForFetch] = useState("");
+  
+  const getFeatures = useCallback(async (IaYear: string) => { // useCallback para evitar recreación innecesaria
+    console.log("Features from year: " + IaYear);
+    const url = `http://localhost:8080/geoserver/IA/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=IA:ia_${IaYear}&maxFeatures=50&outputFormat=application%2Fjson`;
+    try {
+      const response = await axios.get(url);
+      setfeaturesData(response.data.features);
+      console.log(response.data.features); // Imprime los datos recibidos
+      if (response.data.features.length === 0) { // Verifica response.data.features si no son vacios
+        alert("no data");
+        setIaFlag(false);
+        setFetchFlag(false);
+        const selectAnio = document.getElementById('año') as HTMLSelectElement;
+        const selectMuestraIa = document.getElementById('muestra') as HTMLSelectElement;
+        if (selectAnio) {
+          selectAnio.value = OpItems[0].Cont[0]?.info || "";
+        }
+        if (selectMuestraIa) {
+          selectMuestraIa.value = OpItems[1].Cont[0]?.info || "";
+        }
+        setSelectedLayerIa("");
+        setYearSelected("");
+        setSelectedYearForFetch("");
+      }
+      else{
+        setFetchFlag(true)
+      }
+    } catch (error) { // Caso de error en el fetch
+      setIaFlag(false);
+      setFetchFlag(false);
+      console.error('Error al obtener los datos:', error);
+      alert("no data");
+      const selectAnio = document.getElementById('año') as HTMLSelectElement;
+      const selectMuestraIa = document.getElementById('muestra') as HTMLSelectElement;
+      if (selectAnio) {
+          selectAnio.value = OpItems[0].Cont[0]?.info || "";
+      }
+      if (selectMuestraIa) {
+        selectMuestraIa.value = OpItems[1].Cont[0]?.info || "";
+      }
+      setSelectedLayerIa("");
+      setYearSelected("");
+      setSelectedYearForFetch("");
+    }
+  }, []); // getFeatures no depende de nada, array vacio
+
   //Deteccion de cliente o servidor
   useEffect(() => {
     setIsClient(typeof window !== 'undefined');
-    if(typeof window !== 'undefined')
-    {
-      //Obtener datos de la capa IA
-      async function getFeatures(IaYear: string) {
-        console.log("Features from year: " + IaYear)
-        const url = `http://localhost:8080/geoserver/IA/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=IA:ia_${IaYear}&maxFeatures=50&outputFormat=application%2Fjson`;
-        try {
-          const response = await axios.get(url);
-          setfeaturesData(response.data.features);
-          console.log(featuresData)
-        } catch (error) {
-          console.error('Error al obtener los datos:', error);
-        }
-      }
-      // Llamar a getFeatures si es necesario (ejemplo)
-      if (IaFlag && YearSelected) {
-        getFeatures(YearSelected);
+    if (typeof window !== 'undefined') {
+      if (IaFlag && selectedYearForFetch) { // Usa selectedYearForFetch
+        getFeatures(selectedYearForFetch);
       }
     }
-  }, [IaFlag, YearSelected]);
+  }, [IaFlag, selectedYearForFetch, getFeatures]); // getFeatures como dependencia
+
   // constantes de deteccion de menu parametros
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const toggleOptionMenu = () => {
@@ -167,9 +202,18 @@ export default function Home() {
                           (option) => option.info === e.target.value
                         );
                         if (selectedOption) {
-                          setSelectedLayerIa("ia_"+selectedOption.enlace);
-                          setYearSelected(selectedOption.enlace);
+                          if(selectedOption.enlace == "")
+                          {
+                            setSelectedLayerIa("ia_")
+                          }
+                          else
+                          {
+                            setSelectedLayerIa("ia_" + selectedOption.enlace);
+                            setYearSelected(selectedOption.enlace); // Actualiza el estado principal
+                            setSelectedYearForFetch(selectedOption.enlace); // Actualiza el estado para el fetch
+                          }
                         }
+                        
                       }
                       if(item.Op === "muestra"){
                         const selectedOption = item.Cont.find(
@@ -177,7 +221,11 @@ export default function Home() {
                         );
                         if (selectedOption) {
                           toggleIaTo(selectedOption.enlace);
+                          if(selectedOption.enlace == "none"){
+                            setFetchFlag(false)
+                          }
                         }
+                        
                       }
                     }}
                   >
@@ -240,7 +288,7 @@ export default function Home() {
               </div>
             </div>
             {/* Menu de descarga */}
-            <Menu isOpen={isDownMenuOpen} onClose={() => setIsDownMenuOpen(false)} features={featuresData} mapRef={mapRef} IaFlag={IaFlag} IaYear={YearSelected}/>
+            <Menu isOpen={isDownMenuOpen} onClose={() => setIsDownMenuOpen(false)} features={featuresData} mapRef={mapRef} IaFlag={FetchFlag} IaYear={YearSelected}/>
           </>
         )}
       </>
