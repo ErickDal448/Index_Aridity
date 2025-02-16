@@ -205,6 +205,7 @@ export default function Home() {
                           if(selectedOption.enlace == "")
                           {
                             setSelectedLayerIa("ia_")
+                            setFetchFlag(false)
                           }
                           else
                           {
